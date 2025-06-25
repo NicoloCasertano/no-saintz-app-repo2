@@ -1,6 +1,9 @@
 package com.example.app.models.entities;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @Entity
 @Table(name = "admin")
@@ -18,22 +21,16 @@ public class Admin {
     private String admPassword;
 
 
-    @OneToMany(mappedBy = "admin")
-    private Integer workId;
-
-    public Admin(Integer admId, String admName, String admPassword, Integer workId) {
+    public Admin(Integer admId, String admName, String admPassword) {
         this.admId = admId;
         this.admName = admName;
         this.admPassword = admPassword;
-        this.workId = workId;
     }
 
     public Admin() {
     }
 
     //GETTER E SETTER
-
-
     public Integer getAdmId() {
         return admId;
     }
@@ -58,11 +55,5 @@ public class Admin {
         this.admPassword = admPassword;
     }
 
-    public Integer getWorkId() {
-        return workId;
-    }
 
-    public void setWorkId(Integer workId) {
-        this.workId = workId;
-    }
 }

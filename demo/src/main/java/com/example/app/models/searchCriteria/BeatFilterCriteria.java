@@ -1,36 +1,30 @@
-package com.example.app.models.dtos;
-
-import com.example.app.models.entities.Beat;
+package com.example.app.models.searchCriteria;
 
 import java.math.BigDecimal;
 
-public class BeatDto {
+public class BeatFilterCriteria {
     private Integer id;
     private String beatTitle;
     private Integer beatBpm;
     private String beatKey;
     private String beatDescription;
     private BigDecimal beatPrice;
+    private BigDecimal minPrice;
+    private BigDecimal maxPrice;
+    private String sort;
+    private int page;
+    private int size;
 
-    public BeatDto(Integer id, String beatTitle, Integer beatBpm, String beatKey, String beatDescription, BigDecimal beatPrice) {
+    public BeatFilterCriteria(Integer id, String beatTitle, Integer beatBpm, String beatKey, String beatDescription, BigDecimal beatPrice, BigDecimal minPrice, BigDecimal maxPrice) {
         this.id = id;
         this.beatTitle = beatTitle;
         this.beatBpm = beatBpm;
         this.beatKey = beatKey;
         this.beatDescription = beatDescription;
         this.beatPrice = beatPrice;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
     }
-
-
-    public Beat toBeat() {
-        return new Beat(id, beatTitle, beatBpm, beatKey, beatDescription, beatPrice);
-    }
-
-    static public BeatDto toDto(Beat b) {
-        return new BeatDto(b.getBeatId(), b.getBeatTitle(), b.getBeatBpm(), b.getBeatKey(), b.getBeatDescription(), b.getBeatPrice());
-    }
-
-
 
     public Integer getId() {
         return id;
@@ -78,5 +72,45 @@ public class BeatDto {
 
     public void setBeatPrice(BigDecimal beatPrice) {
         this.beatPrice = beatPrice;
+    }
+
+    public BigDecimal getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(BigDecimal minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    public BigDecimal getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(BigDecimal maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 }

@@ -1,9 +1,10 @@
-package com.example.demo;
+package com.example.app;
 
+import com.example.app.NoSaintzWebAppApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(classes = NoSaintzWebAppApplication.class)
 class NoSaintzWebAppApplicationTests {
 
 	@Test

@@ -1,59 +1,25 @@
-package com.example.app.models.entities;
+package com.example.app.models.dtos.response;
 
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
+import com.example.app.models.entities.Authority;
 
-
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@Entity
-@Table(name = "app_user")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+public class UserResponse {
     private Integer userId;
-
-    @Column(name = "user_name")
     private String userName;
-
-    @Column(name = "password")
     private String password;
-
-    @Column(name = "email")
     private String email;
-
-    @Column(name = "art_name")
     private String artName;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
     private List<Authority> authorities;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_work",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "work_id")
-    )
-    private Set<Work> works = new HashSet<>();
-
-
-    public User(Integer userId, String userName, String password, String email, String artName) {
+    public UserResponse(Integer userId, String userName, String password, String email, String artName, List<Authority> authorities) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.artName = artName;
+        this.authorities = authorities;
     }
-
-    public User() {
-    }
-
 
     public Integer getUserId() {
         return userId;
@@ -95,12 +61,11 @@ public class User {
         this.artName = artName;
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public List<Authority> getAuthorities() {
         return authorities;
     }
 
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
-
 }
