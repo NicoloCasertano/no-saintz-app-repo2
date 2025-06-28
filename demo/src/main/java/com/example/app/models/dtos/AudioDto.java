@@ -21,7 +21,7 @@ public class AudioDto {
     }
 
     public static AudioDto toDto(Audio a) {
-        return new AudioDto(a.getAudioId(), a.getFilePath(), a.getAudioName());
+        return new AudioDto(a.getAudioId(), a.getFilePath(), a.getOriginalFileName());
     }
 
     public Integer getAudioDtoId() {
