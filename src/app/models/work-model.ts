@@ -11,5 +11,6 @@ export interface WorkModel {
     img: string,
     user: UserModel,
     dataDiCreazione: Date,
-    nota: NoteModel|null
+    nota: NoteModel|null,
+    sort:string|null
 }

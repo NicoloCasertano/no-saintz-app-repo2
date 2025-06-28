@@ -11,18 +11,15 @@ import { WorkDetails } from './components/details-component/work-details/work-de
 import { ListeningArea } from './components/listening-area/listening-area';
 import { UploadWork } from './components/upload-work/upload-work';
 
-export const routes: Routes = [{ path: '', redirectTo: 'home', pathMatch: 'full'},
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
-    { path: 'user', component: UserPage },
-    { path: 'user/:id', component: UserPage },
-    { path: 'auth/login', component: LogInArea },
-    { path: 'auth/logout', component: LogOut },
-    { path: 'auth/register', component: RegisterAreaComponent },
-    { path: 'admin', component: Admin },
-    { path: 'beat-details/:id', component: BeatDetails },
-    { path: 'work-details/:id', component: WorkDetails},
-    { path: 'work-details/listening-area', component: ListeningArea},
-    { path: 'beat-details/listening-area', component: ListeningArea},
-    { path: 'upload-work', component: UploadWork}
+export const routes: Routes = [{ path: '', redirectTo: 'log-in-area', pathMatch: 'full'},
+    { path: 'log-in-area', loadComponent: () => import('./components/log-in-area/log-in-area').then(m => m.LogInArea)},
+    { path: 'home', loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent) },
+    { path: 'user/:id', loadComponent: () => import('./components/user-page/user-page').then(m => m.UserPage) },
+    { path: 'log-out', loadComponent: () => import('./components/log-out/log-out').then(m => m.LogOut) },
+    { path: 'register-area', loadComponent: () => import('./components/register-area/register-area').then(m => m.RegisterAreaComponent) },
+    { path: 'admin', loadComponent: () => import('./components/admin/admin').then(m => m.Admin)},
+    { path: 'beat-details/:id', loadComponent: () => import('./components/details-component/beat-details/beat-details').then(m => m.BeatDetails)},
+    { path: 'work-details/:id', loadComponent: () => import('./components/details-component/work-details/work-details').then(m => m.WorkDetails)},
+    { path: 'listening-area', loadComponent: () => import('./components/listening-area/listening-area').then(m => m.ListeningArea)},
+    { path: 'upload-work', loadComponent: () => import('./components/upload-work/upload-work').then(m => m.UploadWork)},
 ];

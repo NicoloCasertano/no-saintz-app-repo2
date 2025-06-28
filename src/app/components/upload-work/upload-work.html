@@ -5,8 +5,8 @@ class="drop-zone"
 (drop)="onDrop($event)">
     <p *ngIf="!work.audioFile">Trascina il file audio qui</p>
     <p *ngIf="work.audioFile"> {{ work.audioFile.name }}</p>
-    <button (click)="goToUserPage">Profilo Utente</button>
-    <button (click)="goToHome">Torna alla Home</button>
+    <button (click)="goToUserPage()">Profilo Utente</button>
+    <button (click)="goToHome()">Torna alla Home</button>
 </div>
 
 <div *ngIf="work.audioFile" class="work-form">

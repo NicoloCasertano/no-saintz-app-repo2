@@ -7,7 +7,7 @@ import { UserModel } from "../models/user-model";
 
 @Injectable({providedIn: 'root'})
 export class AdminService {
-    private _url: string = 'http://localhost:8080/api/admin';
+    private _url: string = 'http://localhost:8080/api/admins';
     private _http = inject(HttpClient);
     private _router = inject(Router);
 

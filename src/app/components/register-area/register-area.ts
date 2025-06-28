@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/authorization-service';
+import { Token } from '@angular/compiler';
+import { JwtTokenModel } from '../../models/jwt-token-model';
 
 
 @Component({
@@ -25,13 +27,18 @@ export class RegisterAreaComponent {
     }
 
     onSubmit(){
+        if(this.registerForm.invalid) return;
+
         this._authService.register(this.registerForm.value).subscribe({
-            next: (authToken) =>{
-                console.log(authToken.token);
-                
-                localStorage.setItem("jwt",authToken.token );
+            next: (authToken: JwtTokenModel) => {
+                console.log('Token ricevuto: ', authToken.token);
+                this._authService.setToken(authToken.token);
                 this._router.navigate(['/home']);
-            },error: e => alert('Errore nella registrazione')
+            },
+            error: e => {
+                console.error('Errore nella registrazione: ', e);
+                alert('Registrazione fallita');
+            }
         });
     }
 }

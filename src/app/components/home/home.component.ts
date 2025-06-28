@@ -144,7 +144,7 @@ export class HomeComponent {
     }
     closeAdv() {
       const advDiv = document.querySelector('#advSe') as HTMLElement;
-      const main = document.querySelector('app-home>main ') as HTMLElement;
+      const main = document.querySelector('app-home-component>main ') as HTMLElement;
       const liste = document.querySelector('#viewArea ') as HTMLElement; 
       this.isAdvClosed = !this.isAdvClosed;
 

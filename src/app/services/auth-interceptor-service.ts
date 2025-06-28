@@ -9,7 +9,7 @@ export const authInterceptorFn: HttpInterceptorFn = (req, next) => {
     const token = authService.getToken();
     const router = inject(Router);
 
-    if(req.url.includes('/api/auth/login') || req.url.includes('/api/auth/register')) {
+    if(req.url.includes('/api/authentications/log-in-area') || req.url.includes('/api/authentications/register-area')) {
         return next(req);
     }
 
