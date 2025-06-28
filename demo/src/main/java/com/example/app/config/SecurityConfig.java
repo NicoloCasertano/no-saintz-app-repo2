@@ -55,10 +55,10 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults())
                 .authorizeHttpRequests(configurer ->
                         configurer
-                                .requestMatchers("/api/auth/**","/api/users/**","/api/works/**"
-                                        ,"/api/beats/**").permitAll()
+                                .requestMatchers("/api/authentications/**","/api/users/**","/api/works/**"
+                                        ,"/api/beats/**","/api/audios/**").permitAll()
                                 //.requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/admin/**").permitAll()
+                                .requestMatchers("/api/admins/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

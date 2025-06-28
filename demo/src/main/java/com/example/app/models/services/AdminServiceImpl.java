@@ -67,7 +67,7 @@ public class AdminServiceImpl implements AdminService{
     private UserResponse convertToUserResponse(User user) {
         return new UserResponse(
                 user.getUserId(),
-                user.getUserName(),
+                user.getUsername(),
                 user.getPassword(),
                 user.getEmail(),
                 user.getArtName(),

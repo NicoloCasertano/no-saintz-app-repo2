@@ -13,14 +13,11 @@ public class Audio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer audioId;
 
-    @Column(name = "file_path", nullable = false)
+    @Column(name = "file_path")
     private String filePath;
 
     @Column(name = "audio_name")
     private String audioName;
-
-    private File file = new File(filePath);
-    private Clip clip;
 
     public Audio() {
     }
@@ -28,77 +25,6 @@ public class Audio {
     public Audio(String filePath, String audioName) {
         this.filePath = filePath;
         this.audioName = audioName;
-    }
-
-
-
-    public boolean startAudio(AudioInputStream audioInputStream) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        try {
-            audioInputStream = AudioSystem.getAudioInputStream(file);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-
-            clip.start();
-            return true;
-        }
-        catch(UnsupportedAudioFileException e) {
-            System.out.println("Audio not supported");
-            return false;
-        }
-        catch (IOException e) {
-            System.out.println("Something went wrong with the audio file");
-            return false;
-
-        }
-        catch (LineUnavailableException e) {
-            System.out.println("Unable to access audio resource");
-            return false;
-
-        }
-    }
-
-    public boolean stopAudio(AudioInputStream audioInputStream) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        try {
-            Clip clip = AudioSystem.getClip();
-            if (startAudio(audioInputStream)) {
-                clip.stop();
-            }
-            return true;
-        }
-        catch(UnsupportedAudioFileException e) {
-            System.out.println("Audio not supported");
-            return false;
-        }
-        catch (IOException e) {
-            System.out.println("Something went wrong with the audio file");
-            return false;
-        }
-        catch (LineUnavailableException e) {
-            System.out.println("Unable to access audio resource");
-            return false;
-        }
-    }
-
-    public boolean restartAudio(AudioInputStream audioInputStream) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        try {
-            Clip clip = AudioSystem.getClip();
-            if (startAudio(audioInputStream) || stopAudio(audioInputStream)) {
-                clip.setMicrosecondPosition(0);
-            }
-            return true;
-        }
-        catch(UnsupportedAudioFileException e) {
-            System.out.println("Audio not supported");
-            return false;
-        }
-        catch (IOException e) {
-            System.out.println("Something went wrong with the audio file");
-            return false;
-        }
-        catch (LineUnavailableException e) {
-            System.out.println("Unable to access audio resource");
-            return false;
-        }
     }
 
     public Integer getAudioId() {
@@ -125,19 +51,5 @@ public class Audio {
         this.audioName = audioName;
     }
 
-    public File getFile() {
-        return file;
-    }
 
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public Clip getClip() {
-        return clip;
-    }
-
-    public void setClip(Clip clip) {
-        this.clip = clip;
-    }
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin (origins = "*")
-@RequestMapping("/api/audio")
+@RequestMapping("/api/audios")
 public class AudioController {
     private AudioService audioService;
     private AudioRepository audioRepo;
@@ -27,7 +27,7 @@ public class AudioController {
         this.audioRepo = audioRepo;
     }
 
-    @PostMapping("/api/audio/upload")
+    @PostMapping("/api/audios/upload")
     public ResponseEntity<Audio> uploadAudio(@RequestParam("file")MultipartFile file) throws IOException {
         String uploadDir = "uploads/audio/";
 

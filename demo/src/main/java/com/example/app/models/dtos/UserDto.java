@@ -22,7 +22,7 @@ public class UserDto {
     }
 
     static public UserDto toDto(User u) {
-        return new UserDto(u.getUserId(), u.getUserName(), u.getPassword(), u.getEmail(), u.getArtName());
+        return new UserDto(u.getUserId(), u.getUsername(), u.getPassword(), u.getEmail(), u.getArtName());
     }
 
     public Integer getUserId() {

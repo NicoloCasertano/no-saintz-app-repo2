@@ -45,7 +45,7 @@ public class WorkController {
         return ResponseEntity.ok(works.stream().map(WorkDto::toDto).toList());
     }
 
-    @GetMapping
+    @GetMapping(value = "/all")
     public List<Work> getAllWorks() {
         return workService.findAllWorks();
     }
