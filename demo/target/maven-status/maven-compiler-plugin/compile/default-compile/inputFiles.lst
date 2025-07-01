@@ -1,4 +1,4 @@
-/Users/mac/Dev_N/NoSaintzWebSite/demo/src/main/java/com/example/app/NoSaintzWebAppApplication.java
+/Users/mac/Dev_N/NoSaintzWebSite/demo/src/main/java/com/example/app/NoSaintzWebApplication.java
 /Users/mac/Dev_N/NoSaintzWebSite/demo/src/main/java/com/example/app/config/AppConfig.java
 /Users/mac/Dev_N/NoSaintzWebSite/demo/src/main/java/com/example/app/config/JwtAuthenticationFilter.java
 /Users/mac/Dev_N/NoSaintzWebSite/demo/src/main/java/com/example/app/config/SecurityConfig.java

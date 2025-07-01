@@ -35,16 +35,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthenticationResponse register(RegisterRequest input) throws Exception {
-        if (isEmailTaken(input.getEmail())) {
-            throw new Exception("Email already taken");
-        }
-        User user = buildNewUser(input);
-        user.setUserId(null);
-        System.out.println("User ID before save: " + user.getUserId());
-        userRepository.save(user);
+      if (isEmailTaken(input.getEmail())) {
+        throw new Exception("Email already taken");
+      }
+      User user = buildNewUser(input);
+      user.setUserId(null);
+      System.out.println("User ID before save: " + user.getUserId());
+      userRepository.save(user);
 
-        AuthenticationRequest authReq = new AuthenticationRequest(input.getEmail(), input.getPassword());
-        return login(authReq);
+      AuthenticationRequest authReq = new AuthenticationRequest(input.getEmail(), input.getPassword());
+      return login(authReq);
     }
 
     @Override
