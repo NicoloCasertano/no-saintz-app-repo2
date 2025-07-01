@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin (origins = "*")
+@CrossOrigin (origins = "http://localhost:4200", allowCredentials = "true")
 @RequestMapping("/api/audios")
 public class AudioController {
     private AudioService audioService;

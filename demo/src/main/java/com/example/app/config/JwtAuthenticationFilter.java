@@ -18,9 +18,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
@@ -28,6 +30,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+    }
+
+    List<String> excludedPath = List.of(
+      "/api/authentications/register-area",
+      "/api/authentications/log-in-area"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+      String path = request.getServletPath();
+      System.out.println("shouldNotFilter path = " + path);
+      return excludedPath.stream().anyMatch(path::equalsIgnoreCase);
     }
 
     @Override
@@ -69,10 +83,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-
-
-
-
-
     }
+
 }

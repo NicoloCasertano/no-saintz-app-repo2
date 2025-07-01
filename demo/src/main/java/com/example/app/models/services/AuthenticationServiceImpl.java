@@ -8,6 +8,7 @@ import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -37,11 +39,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new Exception("Email already taken");
         }
         User user = buildNewUser(input);
+        user.setUserId(null);
+        System.out.println("User ID before save: " + user.getUserId());
         userRepository.save(user);
 
         AuthenticationRequest authReq = new AuthenticationRequest(input.getEmail(), input.getPassword());
         return login(authReq);
-
     }
 
     @Override
@@ -57,7 +60,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String jwtToken = jwtService.generateToken(new HashMap<>(), user);
 
-        return new AuthenticationResponse(jwtToken);
+        return new AuthenticationResponse(jwtToken, user.getUsername(), user.getAuthorities().stream()
+          .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 
     private boolean isEmailTaken(String email) {

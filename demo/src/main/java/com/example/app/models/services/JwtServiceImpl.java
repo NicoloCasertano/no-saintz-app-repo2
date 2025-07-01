@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
@@ -28,9 +29,12 @@ public class JwtServiceImpl implements JwtService{
         return extractClaim(token, Claims::getSubject);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+      Claims claims = Jwts.parser()
+        .setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
+        .parseClaimsJws(token)
+        .getBody();
+      return claimsResolver.apply(claims);
     }
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()

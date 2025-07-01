@@ -43,37 +43,30 @@ public class SecurityConfig {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, ex) -> {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.ordinal());
             response.setContentType("application/json");
             response.setHeader("WWW-Authenticate", "");
             response.getWriter().write("{\"error\": \"Unauthorized access\"}");
         };
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults())
-                .authorizeHttpRequests(configurer ->
-                        configurer
-                                .requestMatchers("/api/authentications/**","/api/users/**","/api/works/**"
-                                        ,"/api/beats/**","/api/audios/**").permitAll()
-                                //.requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/admins/**").permitAll()
-                                .anyRequest().authenticated()
-                );
-
-        http.csrf(csrf -> csrf.disable());
-
-        http.exceptionHandling(exceptionHandling ->
-                exceptionHandling
-                        .authenticationEntryPoint(authenticationEntryPoint()));
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    return http
+      .csrf(csrf -> csrf.disable())
+      .cors(cors -> {})
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/authentications/register-area",
+          "/api/authentications/log-in-area",
+          "/error").permitAll()
+        .anyRequest().authenticated()
+      )
+      .exceptionHandling(
+        ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
+      .sessionManagement(
+        sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+  }
 
 }
+
