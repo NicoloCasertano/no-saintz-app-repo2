@@ -8,6 +8,7 @@ import { JwtTokenModel } from '../../models/jwt-token-model';
 
 @Component({
     selector: 'app-register-area',
+    standalone: true,
     imports: [ReactiveFormsModule, RouterModule],
     templateUrl: './register-area.html',
     styleUrl: './register-area.css'
@@ -27,8 +28,12 @@ export class RegisterAreaComponent {
     }
 
     onSubmit(){
-        if(this.registerForm.invalid) return;
-
+        console.log('Submit cliccato');
+        if(this.registerForm.invalid) {
+            console.warn('Form non valida', this.registerForm.value);
+            return;
+        }
+        console.log('Form valida');
         this._authService.register(this.registerForm.value).subscribe({
             next: (authToken: JwtTokenModel) => {
                 console.log('Token ricevuto: ', authToken.token);

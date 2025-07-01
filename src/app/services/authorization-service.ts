@@ -16,22 +16,14 @@ export class AuthService {
     private _http = inject(HttpClient);
     private _router = inject(Router);
     private tokenKey = 'jwt_token';
+    
 
-    register(data: { name: string, email: string; password: string}): Observable<JwtTokenModel>{
-        return this._http.post<JwtTokenModel>(`${this._url}/register-area`, data);
-
+    register(data: any): Observable<JwtTokenModel> {
+        return this._http.post<JwtTokenModel>(`${this._url}/register-area`, data, {withCredentials: true});
     }
 
     login(credentials: { email:string; password: string}): Observable<JwtTokenModel> {
-        return this._http.post<JwtTokenModel>(`${this._url}/log-in-area`, credentials)
-        // this._http.post<JwtTokenModel>(`${this._url}/login`,logreq).subscribe({
-        //     next: (authToken) =>{
-        //         localStorage.setItem("jwt",authToken.token );
-        //         console.log("Authenticated as "+ logreq.email);
-        //         this._router.navigate(['/home']);
-        //     },
-        //     error: e => alert('Errore nel accesso')
-        // });
+        return this._http.post<JwtTokenModel>(`${this._url}/log-in-area`, credentials);
     }
 
     logout() {
