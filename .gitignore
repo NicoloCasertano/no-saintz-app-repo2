@@ -5,6 +5,10 @@ demo/target/
 =======
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+demo/.classpath
+demo/.project
+demo/.settings/
+
 # Compiled output
 /dist
 /tmp
@@ -24,6 +28,7 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+*.iml
 
 # Visual Studio Code
 .vscode/*
@@ -41,6 +46,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+no-saintz-app
 
 # System files
 .DS_Store
