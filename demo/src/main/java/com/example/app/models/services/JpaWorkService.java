@@ -51,4 +51,9 @@ public class JpaWorkService implements WorkService {
     public List<Work> searchWork(WorkFilterCriteria filters) {
         return criteriaWorkRepo.searchWorkByFilters(filters);
     }
+
+  @Override
+  public List<Work> findByUserUserId(int id) {
+    return workRepo.findByUserUserId(id);
+  }
 }

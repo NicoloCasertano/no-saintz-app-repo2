@@ -9,9 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -40,7 +39,7 @@ public class AdminServiceImpl implements AdminService{
                     "L'utente non esiste o è già un Admin");
         }
 
-        List<Authority> authorities = new ArrayList<>();
+        Set<Authority> authorities = new HashSet<>();
         authorities.add(new Authority("ROLE_BASE"));
         authorities.add(new Authority("ROLE_ADMIN"));
         user.get().setAuthorities(authorities);

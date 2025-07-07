@@ -31,9 +31,12 @@ public class User implements UserDetails {
     @Column(name = "art_name")
     private String artName;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
-    private List<Authority> authorities;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+      name = "user_authorities",
+      joinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<Authority> authorities = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -52,9 +55,14 @@ public class User implements UserDetails {
         this.artName = artName;
     }
 
-    public User() {
-    }
+    public User() {}
 
+    public void addAuthority(Authority auth) {
+      this.authorities.add(auth);
+    }
+    public void clearAuthorities() {
+      this.authorities.clear();
+    }
 
     public Integer getUserId() {
         return userId;
@@ -72,32 +80,32 @@ public class User implements UserDetails {
         return password;
     }
 
-  @Override
-  public String getUsername() {
-    return userName;
-  }
+    @Override
+    public String getUsername() {
+      return userName;
+    }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return UserDetails.super.isAccountNonExpired();
-  }
+    @Override
+    public boolean isAccountNonExpired() {
+      return UserDetails.super.isAccountNonExpired();
+    }
 
-  @Override
-  public boolean isAccountNonLocked() {
-    return UserDetails.super.isAccountNonLocked();
-  }
+    @Override
+    public boolean isAccountNonLocked() {
+      return UserDetails.super.isAccountNonLocked();
+    }
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return UserDetails.super.isCredentialsNonExpired();
-  }
+    @Override
+    public boolean isCredentialsNonExpired() {
+      return UserDetails.super.isCredentialsNonExpired();
+    }
 
-  @Override
-  public boolean isEnabled() {
-    return UserDetails.super.isEnabled();
-  }
+    @Override
+    public boolean isEnabled() {
+      return UserDetails.super.isEnabled();
+    }
 
-  public void setPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -121,7 +129,7 @@ public class User implements UserDetails {
         return authorities;
     }
 
-    public void setAuthorities(List<Authority> authorities) {
+    public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
 

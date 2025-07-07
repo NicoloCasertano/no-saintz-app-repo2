@@ -50,6 +50,11 @@ public class WorkController {
         return workService.findAllWorks();
     }
 
+    @GetMapping("/by-user/{userId}")
+    public List<Work> getWorksDoneByUserId(@PathVariable int userId) {
+      return workService.findByUserUserId(userId);
+    }
+
     @PostMapping
     public ResponseEntity<URI> createWork(@RequestBody WorkDto workDto) throws DataException, EntityNotFoundException {
         Work work = workDto.toWork();

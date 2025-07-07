@@ -13,9 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +62,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
           .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 
-    private boolean isEmailTaken(String email) {
+
+  private boolean isEmailTaken(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
@@ -78,9 +77,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return user;
     }
 
-    private List<Authority> initialAuthority() {
+    private Set<Authority> initialAuthority() {
         boolean isFirstUser = userRepository.count() == 0;
-        List<Authority> authorities = new ArrayList<>();
+      Set<Authority> authorities = new HashSet<>();
         authorities.add(new Authority("ROLE_EMPLOYEE"));
         if (isFirstUser) {
             authorities.add(new Authority("ROLE_ADMIN"));

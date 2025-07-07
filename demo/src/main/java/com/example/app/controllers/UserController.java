@@ -1,28 +1,50 @@
 package com.example.app.controllers;
 
+import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
+import com.example.app.models.repositories.UserRepository;
 import com.example.app.models.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
-
+    private UserRepository userRepo;
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepo) {
         this.userService = userService;
+        this.userRepo = userRepo;
     }
 
-    @GetMapping
+  @GetMapping
     public List<User> getAllUsers() {
         return userService.findAllUsers();
     }
+
+  @PutMapping("/{id}/role")
+  public ResponseEntity<?> updateRole(
+    @PathVariable Integer id,
+    @RequestParam("role") String newRoleName
+  ) {
+    User user = userRepo.findById(id)
+      .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+
+    String roleString = "ROLE_" + newRoleName.toUpperCase();
+    Authority newAuth = new Authority(roleString);
+
+    user.clearAuthorities();
+    user.addAuthority(newAuth);
+
+    userRepo.save(user);
+    return ResponseEntity.ok().build();
+  }
 }

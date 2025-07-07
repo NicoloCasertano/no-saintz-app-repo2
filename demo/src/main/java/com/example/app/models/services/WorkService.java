@@ -18,4 +18,6 @@ public interface WorkService {
     boolean deleteWork(int id);
 
     List<Work> searchWork(WorkFilterCriteria filters);
+
+    List<Work> findByUserUserId(int id);
 }
