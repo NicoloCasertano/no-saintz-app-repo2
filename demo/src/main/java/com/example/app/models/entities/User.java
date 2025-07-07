@@ -31,8 +31,8 @@ public class User implements UserDetails {
     @Column(name = "art_name")
     private String artName;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
       name = "user_authorities",
       joinColumns = @JoinColumn(name = "user_id")
     )
