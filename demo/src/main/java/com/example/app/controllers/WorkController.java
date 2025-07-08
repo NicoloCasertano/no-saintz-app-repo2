@@ -2,9 +2,11 @@ package com.example.app.controllers;
 
 import com.example.app.exceptions.EntityNotFoundException;
 import com.example.app.models.dtos.WorkDto;
+import com.example.app.models.entities.Audio;
 import com.example.app.models.entities.User;
 import com.example.app.models.entities.Work;
 import com.example.app.models.searchCriteria.WorkFilterCriteria;
+import com.example.app.models.services.FileStorageService;
 import com.example.app.models.services.UserService;
 import com.example.app.models.services.WorkService;
 import org.apache.coyote.Response;
@@ -13,11 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,11 +35,13 @@ import java.util.Optional;
 public class WorkController {
     private WorkService workService;
     private UserService userService;
+    private FileStorageService fileStorageService;
 
     @Autowired
-    public WorkController(WorkService workService, UserService userService) {
+    public WorkController(WorkService workService, UserService userService, FileStorageService fileStorageService) {
         this.workService = workService;
         this.userService = userService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping
@@ -75,18 +84,28 @@ public class WorkController {
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<URI> uploadWork(
-      @RequestParam("file")MultipartFile file,
-      @RequestParam("title")String title,
-      @RequestParam("bpm")Integer bpm,
-      @RequestParam("key")String key,
-      @RequestParam("dataDiCreazione")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        LocalDate dataDiCreazione,
-      @RequestParam("userId") Integer userId
-      ) throws DataException, EntityNotFoundException {
+        @RequestParam("file")MultipartFile file,
+        @RequestParam("title")String title,
+        @RequestParam("bpm")Integer bpm,
+        @RequestParam("key")String key,
+        @RequestParam("dataDiCreazione")
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDate dataDiCreazione,
+        @RequestParam("userId") Integer userId,
+      Path fileStorageLocation ) throws DataException, EntityNotFoundException, IOException {
+
+      String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+      if(file.isEmpty()) throw new RuntimeException("File vuoto");
+
+      String savedFilePath = fileStorageService.storeFile(file);
+
       User user = userService.findUserById(userId)
         .orElseThrow(() -> new EntityNotFoundException("User", userId));
 
+      if(file.isEmpty()) {
+        System.out.println("File vuoto o non ricevuto");
+        return ResponseEntity.badRequest().body(null);
+      }
       Work w = new Work();
       w.setTitle(title);
       w.setBpm(bpm);
@@ -94,12 +113,19 @@ public class WorkController {
       w.setDataDiCreazione(dataDiCreazione);
       w.setUser(user);
 
+      Audio audio = new Audio();
+      audio.setFilePath(savedFilePath);
+      audio.setOriginalFileName(fileName);
+      w.setAudio(audio);
+
       Work newWork = workService.saveWork(w);
+
       URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
         .replacePath("api/works/{id}")
         .buildAndExpand(newWork.getWorkId())
         .toUri();
+
       return ResponseEntity.created(location).build();
     }
 

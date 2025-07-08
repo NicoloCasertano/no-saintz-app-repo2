@@ -18,4 +18,5 @@ public class AppConfig {
     public UserDetailsService userDetailsService() {
         return userName -> (org.springframework.security.core.userdetails.UserDetails) userRepo.findByEmail(userName).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
 }

@@ -55,6 +55,7 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/api/authentications/register-area",
           "/api/authentications/log-in-area",
+          "/api/works/upload",
           "/error").permitAll()
         .anyRequest().authenticated()
       )

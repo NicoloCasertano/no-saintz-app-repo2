@@ -34,7 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     List<String> excludedPath = List.of(
       "/api/authentications/register-area",
-      "/api/authentications/log-in-area"
+      "/api/authentications/log-in-area",
+      "/api/works/upload",
+      "/api/audios",
+      "/api/admins",
+      "/api/users"
     );
 
     @Override
