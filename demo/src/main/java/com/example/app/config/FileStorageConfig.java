@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Configuration
-public class FileStorageCnfig {
+public class FileStorageConfig {
   @Value("${file.upload-dir}")
   private String uploadDir;
 
