@@ -5,12 +5,16 @@ import com.example.app.models.dtos.WorkDto;
 import com.example.app.models.entities.User;
 import com.example.app.models.entities.Work;
 import com.example.app.models.searchCriteria.WorkFilterCriteria;
+import com.example.app.models.services.UserService;
 import com.example.app.models.services.WorkService;
 import org.apache.coyote.Response;
 import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -23,10 +27,12 @@ import java.util.Optional;
 @RequestMapping("/api/works")
 public class WorkController {
     private WorkService workService;
+    private UserService userService;
 
     @Autowired
-    public WorkController(WorkService workService) {
+    public WorkController(WorkService workService, UserService userService) {
         this.workService = workService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -67,8 +73,38 @@ public class WorkController {
         return ResponseEntity.created(location).build();
     }
 
+    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<URI> uploadWork(
+      @RequestParam("file")MultipartFile file,
+      @RequestParam("title")String title,
+      @RequestParam("bpm")Integer bpm,
+      @RequestParam("key")String key,
+      @RequestParam("dataDiCreazione")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        LocalDate dataDiCreazione,
+      @RequestParam("userId") Integer userId
+      ) throws DataException, EntityNotFoundException {
+      User user = userService.findUserById(userId)
+        .orElseThrow(() -> new EntityNotFoundException("User", userId));
+
+      Work w = new Work();
+      w.setTitle(title);
+      w.setBpm(bpm);
+      w.setKey(key);
+      w.setDataDiCreazione(dataDiCreazione);
+      w.setUser(user);
+
+      Work newWork = workService.saveWork(w);
+      URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .replacePath("api/works/{id}")
+        .buildAndExpand(newWork.getWorkId())
+        .toUri();
+      return ResponseEntity.created(location).build();
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateLibro(@PathVariable int id, @RequestBody WorkDto updateDto) throws DataException, EntityNotFoundException {
+    public ResponseEntity<?> updateWork(@PathVariable int id, @RequestBody WorkDto updateDto) throws DataException, EntityNotFoundException {
         if(id != updateDto.getWorkId()) {
             return ResponseEntity.badRequest().body(("Id del path e id del dto non corrispondono"));
         }
