@@ -105,15 +105,15 @@ public class WorkController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateWork(@PathVariable int id, @RequestBody WorkDto updateDto) throws DataException, EntityNotFoundException {
-        if(id != updateDto.getWorkId()) {
-            return ResponseEntity.badRequest().body(("Id del path e id del dto non corrispondono"));
-        }
-        Optional<Work> opw = workService.findWorkById(id);
-        if(opw.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Work updateWork = workService.updateWork(opw.get());
-        return ResponseEntity.ok(WorkDto.toDto(updateWork));
+      if (id != updateDto.getWorkId()) {
+        return ResponseEntity.badRequest().body(("Id del path e id del dto non corrispondono"));
+      }
+      Optional<Work> opw = workService.findWorkById(id);
+      if (opw.isEmpty()) {
+        return ResponseEntity.notFound().build();
+      }
+      Work updateWork = workService.updateWork(opw.get());
+      return ResponseEntity.ok(WorkDto.toDto(updateWork));
     }
 
     @DeleteMapping("/{id}")
