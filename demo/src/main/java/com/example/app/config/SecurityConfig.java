@@ -56,6 +56,7 @@ public class SecurityConfig {
         .requestMatchers("/api/authentications/register-area",
           "/api/authentications/log-in-area",
           "/api/works/upload",
+          "/api/audios/**",
           "/error").permitAll()
         .anyRequest().authenticated()
       )

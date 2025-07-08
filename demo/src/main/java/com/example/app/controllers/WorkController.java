@@ -28,6 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
@@ -83,7 +84,7 @@ public class WorkController {
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<URI> uploadWork(
+    public ResponseEntity<WorkDto> uploadWork(
         @RequestParam("file")MultipartFile file,
         @RequestParam("title")String title,
         @RequestParam("bpm")Integer bpm,
@@ -91,8 +92,7 @@ public class WorkController {
         @RequestParam("dataDiCreazione")
           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
           LocalDate dataDiCreazione,
-        @RequestParam("userId") Integer userId,
-      Path fileStorageLocation ) throws DataException, EntityNotFoundException, IOException {
+        @RequestParam("userId") Integer userId) throws DataException, EntityNotFoundException, IOException {
 
       String fileName = StringUtils.cleanPath(file.getOriginalFilename());
       if(file.isEmpty()) throw new RuntimeException("File vuoto");
@@ -119,14 +119,14 @@ public class WorkController {
       w.setAudio(audio);
 
       Work newWork = workService.saveWork(w);
-
+      WorkDto dto = WorkDto.toDto(newWork);
       URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
         .replacePath("api/works/{id}")
         .buildAndExpand(newWork.getWorkId())
         .toUri();
 
-      return ResponseEntity.created(location).build();
+      return ResponseEntity.created(location).body(dto);
     }
 
     @PutMapping("/{id}")
@@ -150,5 +150,11 @@ public class WorkController {
         }
         workService.deleteWork(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<WorkDto> getWork(@PathVariable int id) {
+        WorkDto dto = WorkDto.toDto(workService.findWorkById(id).orElseThrow());
+        return ResponseEntity.ok(dto);
     }
 }

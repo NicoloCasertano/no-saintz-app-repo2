@@ -37,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       "/api/authentications/log-in-area",
       "/api/works/upload",
       "/api/audios",
+      "/api/works/by-user",
       "/api/admins",
       "/api/users"
     );
