@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface AudioService {
 
     Optional<Audio> findAudioById(int id);
-    List<Audio> finAllAudios();
+    List<Audio> findAllAudios();
     Audio saveAudio(Audio audio);
     Audio updateAudio(Audio audio);
     boolean deleteAudio(int id);

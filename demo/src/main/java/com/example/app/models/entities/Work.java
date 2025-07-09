@@ -33,7 +33,7 @@ public class Work {
     private String img;
 
     @ManyToOne
-    @JoinColumn(name = "fr_user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "data_di_creazione")
@@ -46,7 +46,7 @@ public class Work {
     private Set<User> users = new HashSet<>();
 
 
-    public Work(Integer workId, String title, Integer bpm, String key, Audio audio, String img, User user, LocalDate dataDiCreazione, String nota) {
+    public Work(Integer workId, String title, Integer bpm, String key, Audio audio, String img, User user, LocalDate dataDiCreazione, String nota, Set<User> users) {
         this.workId = workId;
         this.title = title;
         this.bpm = bpm;
@@ -56,6 +56,7 @@ public class Work {
         this.user = user;
         this.dataDiCreazione = dataDiCreazione;
         this.nota = nota;
+        this.users = users;
     }
 
     //GETTER E SETTER
@@ -116,6 +117,14 @@ public class Work {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<User> getUsers() {
+      return users;
+    }
+
+    public void setUsers(Set<User> users) {
+      this.users = users;
     }
 
     public LocalDate getDataDiCreazione() {

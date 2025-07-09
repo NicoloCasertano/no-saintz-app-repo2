@@ -5,19 +5,23 @@ import com.example.app.models.entities.User;
 import com.example.app.models.entities.Work;
 
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WorkDto {
     private Integer workId;
     private String title;
     private Integer bpm;
     private String key;
-    private Audio audio;
+    private AudioDto audio;
     private String img;
-    private User user;
+    private UserDto user;
     private LocalDate dataDiCreazione;
     private String nota;
 
-    public WorkDto(Integer workId, String title, Integer bpm, String key, Audio audio, String img, User user, LocalDate dataDiCreazione, String nota) {
+    public WorkDto(){};
+
+    public WorkDto(Integer workId, String title, Integer bpm, String key, AudioDto audio, String img, UserDto user, LocalDate dataDiCreazione, String nota) {
         this.workId = workId;
         this.title = title;
         this.bpm = bpm;
@@ -30,20 +34,43 @@ public class WorkDto {
     }
 
     public Work toWork() {
-        return new Work(workId, title, bpm, key, audio, img, user, dataDiCreazione, nota);
+      Work w = new Work();
+      w.setWorkId(this.workId);
+      w.setTitle(this.title);
+      w.setBpm(this.bpm);
+      w.setKey(this.key);
+      w.setAudio(this.audio.toAudio());
+      w.setImg(this.img);
+      w.setUser(this.user.toUser());
+      w.setDataDiCreazione(this.dataDiCreazione);
+      w.setNota(this.nota);
+      return w;
     }
 
-    static public WorkDto toDto(Work w) {
+    public static WorkDto toDto(Work w) {
         return new WorkDto(w.getWorkId(),
                 w.getTitle(),
                 w.getBpm(),
                 w.getKey(),
-                w.getAudio(),
+                AudioDto.toDto(w.getAudio()),
                 w.getImg(),
-                w.getUser(),
+                UserDto.toDto(w.getUser()),
                 w.getDataDiCreazione(),
                 w.getNota());
     }
+
+//    public static WorkDto toDto(Work w) {
+//      var dto = new WorkDto();
+//      dto.setWorkId(w.getWorkId());
+//      dto.setTitle(w.getTitle());
+//      dto.setBpm(w.getBpm());
+//      dto.setKey(w.getKey());
+//      dto.setAudioDto(AudioDto.toDto(w.getAudio()));
+//      dto.setImg(w.getImg());
+//      dto.setUserDto(UserDto.toDto(w.getUser()));
+//      dto.setDataDiCreazione(w.getDataDiCreazione());
+//      return dto;
+//    }
 
 
     public Integer getWorkId() {
@@ -78,14 +105,13 @@ public class WorkDto {
         this.key = key;
     }
 
-    public Audio getAudio() {
+    public AudioDto getAudio() {
         return audio;
     }
 
-    public void setAudio(Audio audio) {
+    public void setAudio(AudioDto audio) {
         this.audio = audio;
     }
-
     public String getImg() {
         return img;
     }
@@ -94,17 +120,17 @@ public class WorkDto {
         this.img = img;
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDto user) {
         this.user = user;
     }
 
     public LocalDate getDataDiCreazione() {
-        return dataDiCreazione;
-    }
+          return dataDiCreazione;
+      }
 
     public void setDataDiCreazione(LocalDate dataDiCreazione) {
         this.dataDiCreazione = dataDiCreazione;

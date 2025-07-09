@@ -3,6 +3,7 @@ package com.example.app.config;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -53,11 +54,7 @@ public class SecurityConfig {
       .csrf(csrf -> csrf.disable())
       .cors(cors -> {})
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/authentications/register-area",
-          "/api/authentications/log-in-area",
-          "/api/works/upload",
-          "/api/audios/**",
-          "/error").permitAll()
+        .requestMatchers("/api/**").permitAll()
         .anyRequest().authenticated()
       )
       .exceptionHandling(

@@ -1,5 +1,6 @@
 package com.example.app.controllers;
 
+import com.example.app.models.dtos.AudioDto;
 import com.example.app.models.entities.Audio;
 import com.example.app.models.repositories.AudioRepository;
 import com.example.app.models.services.AudioService;
@@ -20,7 +21,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin (origins = "http://localhost:4200", allowCredentials = "true")
+@CrossOrigin (origins = "http://localhost:4200", allowedHeaders = "*")
 @RequestMapping("/api/audios")
 public class AudioController {
     private AudioService audioService;
@@ -35,32 +36,31 @@ public class AudioController {
     }
 
     @GetMapping("/{fileName:.+}")
-    public ResponseEntity<Resource> getAudio(@PathVariable String fileName) throws MalformedURLException {
+    public ResponseEntity<Resource> getAudio(@PathVariable String fileName) throws IOException {
       Path filePath = fileStorageLocation.resolve(fileName).normalize();
       Resource resource = new UrlResource(filePath.toUri());
 
-      if(!resource.exists()) {
+      if(!resource.exists() || !resource.isReadable()) {
         return ResponseEntity.notFound().build();
       }
-
+      String contentType = Files.probeContentType(filePath);
       return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType("audio/mpeg"))
+        .contentType(MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
         .body(resource);
     }
 
-    @PostMapping("/api/audios/upload")
-    public ResponseEntity<Audio> uploadAudio(@RequestParam("file")MultipartFile file) throws IOException {
-        String uploadDir = "uploads/audio/";
-
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir + fileName);
+    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AudioDto> uploadAudio(@RequestParam("file")MultipartFile file) throws IOException {
+        String uploadDir = "uploads";
+        String storedFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir).resolve(storedFileName);
 
         Files.createDirectories(filePath.getParent());
         Files.write(filePath, file.getBytes());
 
-        Audio audio = new Audio(filePath.toString(), file.getOriginalFilename());
+        Audio audio = new Audio(storedFileName, file.getOriginalFilename());
         audioRepo.save(audio);
 
-        return ResponseEntity.ok(audio);
+        return ResponseEntity.ok(AudioDto.toDto(audio));
     }
 }

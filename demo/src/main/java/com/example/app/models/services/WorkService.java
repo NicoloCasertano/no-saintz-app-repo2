@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkService {
-    Optional<Work> findWorkById(int id);
+    Optional<Work> findWorkById(Integer id);
 
     List<Work> findAllWorks();
 
@@ -15,9 +15,9 @@ public interface WorkService {
 
     Work updateWork(Work work);
 
-    boolean deleteWork(int id);
+    boolean deleteWork(Integer id);
 
     List<Work> searchWork(WorkFilterCriteria filters);
 
-    List<Work> findByUserUserId(int id);
+    List<Work> findByUsersUserId(Integer id);
 }

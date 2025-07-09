@@ -25,9 +25,8 @@ public class JpaAudioService implements AudioService {
         return audioRepo.findById(id);
     }
 
-
     @Override
-    public List<Audio> finAllAudios() {
+    public List<Audio> findAllAudios() {
         return audioRepo.findAll();
     }
 

@@ -6,6 +6,7 @@ import com.example.app.models.repositories.criteriaRepositories.CriteriaWorkRepo
 import com.example.app.models.searchCriteria.WorkFilterCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,8 @@ public class JpaWorkService implements WorkService {
     }
 
     @Override
-    public Optional<Work> findWorkById(int id) {
+    @Transactional(readOnly = true)
+    public Optional<Work> findWorkById(Integer id) {
         return workRepo.findById(id);
     }
 
@@ -42,7 +44,7 @@ public class JpaWorkService implements WorkService {
     }
 
     @Override
-    public boolean deleteWork(int id) {
+    public boolean deleteWork(Integer id) {
         workRepo.deleteById(id);
         return true;
     }
@@ -53,7 +55,7 @@ public class JpaWorkService implements WorkService {
     }
 
   @Override
-  public List<Work> findByUserUserId(int id) {
-    return workRepo.findByUserUserId(id);
+  public List<Work> findByUsersUserId(Integer id) {
+    return workRepo.findByUsersUserId(id);
   }
 }

@@ -9,7 +9,10 @@ public class UserDto {
     private String email;
     private String artName;
 
-    public UserDto(Integer userId, String userName, String password, String email, String artName) {
+  public UserDto() {
+  }
+
+  public UserDto(Integer userId, String userName, String password, String email, String artName) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
@@ -23,6 +26,16 @@ public class UserDto {
 
     static public UserDto toDto(User u) {
         return new UserDto(u.getUserId(), u.getUsername(), u.getPassword(), u.getEmail(), u.getArtName());
+    }
+
+    public static UserDto fromEntity(User u) {
+      var dto = new UserDto();
+      dto.setUserId(u.getUserId());
+      dto.setUserName(u.getUsername());
+      dto.setPassword(u.getPassword());
+      dto.setArtName(u.getArtName());
+      dto.setEmail(u.getEmail());
+      return dto;
     }
 
     public Integer getUserId() {

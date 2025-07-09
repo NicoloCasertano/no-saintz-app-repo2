@@ -5,10 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "app_user")
@@ -133,4 +130,11 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
+    public Set<Work> getWorks() {
+      return works;
+    }
+
+    public void setWorks(Set<Work> works) {
+      this.works = works;
+    }
 }

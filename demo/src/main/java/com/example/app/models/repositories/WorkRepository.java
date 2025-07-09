@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface WorkRepository extends JpaRepository<Work, Integer> {
 
-  List<Work> findByUserUserId(int userId);
+  List<Work> findByUsersUserId(Integer userId);
 }

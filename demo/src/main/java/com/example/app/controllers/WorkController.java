@@ -62,13 +62,13 @@ public class WorkController {
     }
 
     @GetMapping(value = "/all")
-    public List<Work> getAllWorks() {
-        return workService.findAllWorks();
+    public List<WorkDto> getAllWorks() {
+        return workService.findAllWorks().stream().map(WorkDto::toDto).toList();
     }
 
     @GetMapping("/by-user/{userId}")
-    public List<Work> getWorksDoneByUserId(@PathVariable int userId) {
-      return workService.findByUserUserId(userId);
+    public List<WorkDto> getWorksDoneByUserId(@PathVariable Integer userId) {
+      return workService.findByUsersUserId(userId).stream().map(WorkDto::toDto).toList();
     }
 
     @PostMapping
@@ -129,7 +129,7 @@ public class WorkController {
       return ResponseEntity.created(location).body(dto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateWork(@PathVariable int id, @RequestBody WorkDto updateDto) throws DataException, EntityNotFoundException {
       if (id != updateDto.getWorkId()) {
         return ResponseEntity.badRequest().body(("Id del path e id del dto non corrispondono"));
@@ -142,7 +142,7 @@ public class WorkController {
       return ResponseEntity.ok(WorkDto.toDto(updateWork));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteWorkById(@PathVariable Integer id) throws DataException, EntityNotFoundException {
         Optional<Work> opw = workService.findWorkById(id);
         if(opw.isEmpty()) {
@@ -153,8 +153,9 @@ public class WorkController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WorkDto> getWork(@PathVariable int id) {
-        WorkDto dto = WorkDto.toDto(workService.findWorkById(id).orElseThrow());
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<WorkDto> getWork(@PathVariable Integer id) {
+        return workService.findWorkById(id)
+          .map(w -> ResponseEntity.ok(WorkDto.toDto(w)))
+          .orElse(ResponseEntity.notFound().build());
     }
 }

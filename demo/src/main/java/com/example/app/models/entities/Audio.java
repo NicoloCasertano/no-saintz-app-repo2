@@ -11,20 +11,21 @@ import java.io.IOException;
 public class Audio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Integer audioId;
 
     @Column(name = "file_path")
     private String filePath;
 
     @Column(name = "audio_name")
-    private String audioName;
+    private String originalFileName;
 
     public Audio() {
     }
 
-    public Audio(String filePath, String audioName) {
+    public Audio(String filePath, String originalFileName) {
         this.filePath = filePath;
-        this.audioName = audioName;
+        this.originalFileName = originalFileName;
     }
 
     public Integer getAudioId() {
@@ -44,11 +45,11 @@ public class Audio {
     }
 
     public String getOriginalFileName() {
-        return audioName;
+        return originalFileName;
     }
 
-    public void setOriginalFileName(String audioName) {
-        this.audioName = audioName;
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 
 

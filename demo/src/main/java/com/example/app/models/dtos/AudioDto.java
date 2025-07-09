@@ -2,26 +2,31 @@ package com.example.app.models.dtos;
 
 import com.example.app.models.entities.Audio;
 
+import java.nio.file.Paths;
+
 public class AudioDto {
     private Integer id;
-    private String filePath;
-    private String name;
+    private String storedFileName;
+    private String originalFileName;
 
     public AudioDto() {
     }
 
-    public AudioDto(Integer id, String filePath, String name) {
+    public AudioDto(Integer id, String storedFileName, String originalFileName) {
         this.id = id;
-        this.filePath = filePath;
-        this.name = name;
+        this.storedFileName = storedFileName;
+        this.originalFileName = originalFileName;
     }
 
     public Audio toAudio() {
-        return new Audio(filePath, name);
+        return new Audio("uploads/" + storedFileName, originalFileName);
     }
 
     public static AudioDto toDto(Audio a) {
-        return new AudioDto(a.getAudioId(), a.getFilePath(), a.getOriginalFileName());
+        return new AudioDto(
+          a.getAudioId(),
+          Paths.get(a.getFilePath()).getFileName().toString(),
+          a.getOriginalFileName());
     }
 
     public Integer getAudioDtoId() {
@@ -32,19 +37,19 @@ public class AudioDto {
         this.id = audioId;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getStoredFileName() {
+        return storedFileName;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setStoredFileName(String storedFileName) {
+        this.storedFileName = storedFileName;
     }
 
-    public String getName() {
-        return name;
+    public String getOriginalFileName() {
+        return originalFileName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 }
