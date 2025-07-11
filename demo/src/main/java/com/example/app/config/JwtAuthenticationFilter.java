@@ -36,10 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       "/api/authentications/register-area",
       "/api/authentications/log-in-area",
       "/api/works/upload",
-      "/api/audios",
+      "/api/audios/**",
       "/api/works/by-user",
-      "/api/admins",
-      "/api/users"
+      "/api/works/**",
+      "/api/admins/**",
+      "/api/users/**"
     );
 
     @Override
