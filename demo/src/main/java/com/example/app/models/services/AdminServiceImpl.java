@@ -67,7 +67,6 @@ public class AdminServiceImpl implements AdminService{
         return new UserResponse(
                 user.getUserId(),
                 user.getUsername(),
-                user.getPassword(),
                 user.getEmail(),
                 user.getArtName(),
                 user.getAuthorities().stream().map(auth -> (Authority) auth).toList());

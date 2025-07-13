@@ -1,5 +1,6 @@
 package com.example.app.models.services;
 
+import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -15,6 +16,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
+
 @Service
 public class JwtServiceImpl implements JwtService{
 

@@ -1,5 +1,6 @@
 package com.example.app.models.services;
 
+import com.example.app.models.dtos.UserDto;
 import com.example.app.models.entities.User;
 
 import java.util.List;
@@ -16,4 +17,7 @@ public interface UserService {
 
     boolean deleteUser(int id);
 
+    Optional<User> findByArtName(String artName);
+
+    Optional<UserDto> findDtoById(Integer id);
 }

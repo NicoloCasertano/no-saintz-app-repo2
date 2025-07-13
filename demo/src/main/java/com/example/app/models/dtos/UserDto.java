@@ -25,7 +25,12 @@ public class UserDto {
     }
 
     static public UserDto toDto(User u) {
-        return new UserDto(u.getUserId(), u.getUsername(), u.getPassword(), u.getEmail(), u.getArtName());
+      UserDto dto = new UserDto();
+      dto.setUserId(u.getUserId());
+      dto.setUserName(u.getUsername());
+      dto.setEmail(u.getEmail());
+      dto.setArtName(u.getArtName());
+      return dto;
     }
 
     public static UserDto fromEntity(User u) {

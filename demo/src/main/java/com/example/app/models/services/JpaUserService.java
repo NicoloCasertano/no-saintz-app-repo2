@@ -1,5 +1,6 @@
 package com.example.app.models.services;
 
+import com.example.app.models.dtos.UserDto;
 import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,4 +44,16 @@ public class JpaUserService implements UserService {
         userRepo.deleteById(id);
         return true;
     }
+
+    @Override
+    public Optional<User> findByArtName(String artName) {
+      return userRepo.findByArtName(artName);
+    }
+
+  @Override
+  public Optional<UserDto> findDtoById(Integer id) {
+    return userRepo.findById(id).map(UserDto::toDto);
+  }
+
+
 }

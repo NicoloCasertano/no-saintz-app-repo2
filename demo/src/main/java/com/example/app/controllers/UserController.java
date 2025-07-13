@@ -1,5 +1,6 @@
 package com.example.app.controllers;
 
+import com.example.app.models.dtos.UserDto;
 import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
@@ -25,26 +26,34 @@ public class UserController {
         this.userRepo = userRepo;
     }
 
-  @GetMapping
-    public List<User> getAllUsers() {
-        return userService.findAllUsers();
+    @GetMapping
+      public List<User> getAllUsers() {
+          return userService.findAllUsers();
+      }
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<?> updateRole(
+      @PathVariable Integer id,
+      @RequestParam("role") String newRoleName
+    ) {
+      User user = userRepo.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+
+      String roleString = "ROLE_" + newRoleName.toUpperCase();
+      Authority newAuth = new Authority(roleString);
+
+      user.clearAuthorities();
+      user.addAuthority(newAuth);
+
+      userRepo.save(user);
+      return ResponseEntity.ok().build();
     }
 
-  @PutMapping("/{id}/role")
-  public ResponseEntity<?> updateRole(
-    @PathVariable Integer id,
-    @RequestParam("role") String newRoleName
-  ) {
-    User user = userRepo.findById(id)
-      .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
-
-    String roleString = "ROLE_" + newRoleName.toUpperCase();
-    Authority newAuth = new Authority(roleString);
-
-    user.clearAuthorities();
-    user.addAuthority(newAuth);
-
-    userRepo.save(user);
-    return ResponseEntity.ok().build();
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Integer id) {
+      return userService.findUserById(id)
+        .map(UserDto::toDto)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.status(NOT_FOUND).build());
+    }
 }
