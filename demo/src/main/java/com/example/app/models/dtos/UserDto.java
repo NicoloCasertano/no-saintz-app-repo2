@@ -2,22 +2,26 @@ package com.example.app.models.dtos;
 
 import com.example.app.models.entities.User;
 
+import java.util.List;
+
 public class UserDto {
     private Integer userId;
     private String userName;
     private String password;
     private String email;
     private String artName;
+    private List<WorkDto> works;
 
   public UserDto() {
   }
 
-  public UserDto(Integer userId, String userName, String password, String email, String artName) {
+  public UserDto(Integer userId, String userName, String password, String email, String artName, List<WorkDto> works) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.artName = artName;
+        this.works = works;
     }
 
     public User toUser() {
@@ -28,20 +32,26 @@ public class UserDto {
       UserDto dto = new UserDto();
       dto.setUserId(u.getUserId());
       dto.setUserName(u.getUsername());
+      dto.setPassword(null);
       dto.setEmail(u.getEmail());
       dto.setArtName(u.getArtName());
+      dto.setWorks(u.getWorks().stream()
+        .map(WorkDto::toDto).toList()
+      );
       return dto;
     }
 
-    public static UserDto fromEntity(User u) {
-      var dto = new UserDto();
-      dto.setUserId(u.getUserId());
-      dto.setUserName(u.getUsername());
-      dto.setPassword(u.getPassword());
-      dto.setArtName(u.getArtName());
-      dto.setEmail(u.getEmail());
-      return dto;
-    }
+//    public static UserDto fromEntity(User u) {
+//      UserDto dto = new UserDto();
+//      dto.setUserId(u.getUserId());
+//      dto.setUserName(u.getUsername());
+//      dto.setPassword(u.getPassword());
+//      dto.setArtName(u.getArtName());
+//      dto.setEmail(u.getEmail());
+//      dto.setWorks(u.getWorks().stream()
+//        .map(WorkDto::toDto).toList());
+//      return dto;
+//    }
 
     public Integer getUserId() {
         return userId;
@@ -81,5 +91,13 @@ public class UserDto {
 
     public void setArtName(String artName) {
         this.artName = artName;
+    }
+
+    public List<WorkDto> getWorks() {
+      return works;
+    }
+
+    public void setWorks(List<WorkDto> works) {
+      this.works = works;
     }
 }

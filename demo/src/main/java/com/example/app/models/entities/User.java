@@ -20,6 +20,7 @@ public class User implements UserDetails {
     @Column(name = "user_name")
     private String userName;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
@@ -36,13 +37,12 @@ public class User implements UserDetails {
     )
     private Set<Authority> authorities = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_work",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "work_id")
     )
-    @JsonIgnore
     private Set<Work> works = new HashSet<>();
 
 

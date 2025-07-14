@@ -15,13 +15,13 @@ public class WorkDto {
     private String key;
     private AudioDto audio;
     private String img;
-    private UserDto user;
+    private UserSummaryDto user;
     private LocalDate dataDiCreazione;
     private String nota;
 
     public WorkDto(){};
 
-    public WorkDto(Integer workId, String title, Integer bpm, String key, AudioDto audio, String img, UserDto user, LocalDate dataDiCreazione, String nota) {
+    public WorkDto(Integer workId, String title, Integer bpm, String key, AudioDto audio, String img, UserSummaryDto user, LocalDate dataDiCreazione, String nota) {
         this.workId = workId;
         this.title = title;
         this.bpm = bpm;
@@ -34,29 +34,38 @@ public class WorkDto {
     }
 
     public Work toWork() {
-      Work w = new Work();
-      w.setWorkId(this.workId);
-      w.setTitle(this.title);
-      w.setBpm(this.bpm);
-      w.setKey(this.key);
-      w.setAudio(this.audio.toAudio());
-      w.setImg(this.img);
-      w.setUser(this.user.toUser());
-      w.setDataDiCreazione(this.dataDiCreazione);
-      w.setNota(this.nota);
-      return w;
+        Work w = new Work();
+        w.setWorkId(this.workId);
+        w.setTitle(this.title);
+        w.setBpm(this.bpm);
+        w.setKey(this.key);
+        w.setAudio(this.audio.toAudio());
+        w.setImg(this.img);
+        w.setUser(this.user.toUser());
+        w.setDataDiCreazione(this.dataDiCreazione);
+        w.setNota(this.nota);
+        return w;
     }
 
     public static WorkDto toDto(Work w) {
-        return new WorkDto(w.getWorkId(),
-                w.getTitle(),
-                w.getBpm(),
-                w.getKey(),
-                AudioDto.toDto(w.getAudio()),
-                w.getImg(),
-                UserDto.toDto(w.getUser()),
-                w.getDataDiCreazione(),
-                w.getNota());
+        WorkDto dto = new WorkDto();
+        dto.setWorkId(w.getWorkId());
+        dto.setTitle(w.getTitle());
+        dto.setBpm(w.getBpm());
+        dto.setKey(w.getKey());
+        dto.setAudio(AudioDto.toDto(w.getAudio()));
+        dto.setImg(w.getImg());
+
+        User u = w.getUser();
+        if (u != null) {
+          dto.setUser(UserSummaryDto.toDto(u));
+        } else {
+          dto.setUser(null);
+        }
+
+        dto.setDataDiCreazione(w.getDataDiCreazione());
+        dto.setNota(w.getNota());
+        return dto;
     }
 
 //    public static WorkDto toDto(Work w) {
@@ -120,11 +129,11 @@ public class WorkDto {
         this.img = img;
     }
 
-    public UserDto getUser() {
+    public UserSummaryDto getUser() {
         return user;
     }
 
-    public void setUser(UserDto user) {
+    public void setUser(UserSummaryDto user) {
         this.user = user;
     }
 

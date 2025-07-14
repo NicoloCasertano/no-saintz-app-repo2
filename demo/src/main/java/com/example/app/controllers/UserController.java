@@ -51,9 +51,17 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Integer id) {
-      return userService.findUserById(id)
-        .map(UserDto::toDto)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.status(NOT_FOUND).build());
+      System.out.println("Fetching user with ID: " + id);
+      var userOpt = userService.findUserById(id);
+
+      if (userOpt.isEmpty()) {
+        System.out.println("User not found");
+        return ResponseEntity.status(NOT_FOUND).build();
+      }
+
+      var dto = UserDto.toDto(userOpt.get());
+      System.out.println("User found: " + dto.getUserName());
+      return ResponseEntity.ok(dto);
     }
+
 }
