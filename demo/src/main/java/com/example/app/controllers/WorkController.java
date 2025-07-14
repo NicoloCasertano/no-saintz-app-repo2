@@ -3,18 +3,19 @@ package com.example.app.controllers;
 import com.example.app.exceptions.EntityNotFoundException;
 import com.example.app.models.dtos.WorkDto;
 import com.example.app.models.entities.Audio;
+import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import com.example.app.models.entities.Work;
 import com.example.app.models.searchCriteria.WorkFilterCriteria;
-import com.example.app.models.services.FileStorageService;
-import com.example.app.models.services.UserService;
-import com.example.app.models.services.WorkService;
+import com.example.app.models.services.*;
 import org.apache.coyote.Response;
 import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,9 +52,9 @@ public class WorkController {
                                                     @RequestParam(required = false) Integer bpm,
                                                     @RequestParam(required = false) String key,
                                                     @RequestParam(required = false) List<User> user,
-                                                    @RequestParam(required = false) LocalDate dataDiCreazione,
-                                                    @RequestParam(required = false) LocalDate minData, //da rivedere ASAP la questione audio
-                                                    @RequestParam(required = false) LocalDate maxData,
+                                                    @RequestParam("dataDiCreazione") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataDiCreazione,
+                                                    @RequestParam("minData") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate minData,
+                                                    @RequestParam("maxData") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maxData,
                                                     @RequestParam(defaultValue = "") String nota,
                                                     @RequestParam(defaultValue = "orderByDataDiCreazioneDesc") String sort) {
         WorkFilterCriteria wfc = new WorkFilterCriteria(workId, title, bpm, key, user, dataDiCreazione, minData, maxData, nota, sort);
@@ -85,22 +86,29 @@ public class WorkController {
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<WorkDto> uploadWork(
-        @RequestParam("file")MultipartFile file,
-        @RequestParam("title")String title,
-        @RequestParam("bpm")Integer bpm,
-        @RequestParam("key")String key,
-        @RequestParam("dataDiCreazione")
-          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-          LocalDate dataDiCreazione,
-        @RequestParam("userId") Integer userId) throws DataException, EntityNotFoundException, IOException {
+      @RequestParam("file")MultipartFile file,
+      @RequestParam("title")String title,
+      @RequestParam("bpm")Integer bpm,
+      @RequestParam("key")String key,
+      @RequestParam("dataDiCreazione") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dataDiCreazione,
+      @RequestParam("artName") String artName,
+      Authentication auth) throws DataException, EntityNotFoundException, IOException {
+
+      boolean isAdmin = auth.getAuthorities().stream()
+        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+      if (!isAdmin || artName == null || artName.isBlank()) {
+        User principal = (User) auth.getPrincipal();
+        artName = principal.getArtName();
+      }
 
       String fileName = StringUtils.cleanPath(file.getOriginalFilename());
       if(file.isEmpty()) throw new RuntimeException("File vuoto");
-
       String savedFilePath = fileStorageService.storeFile(file);
 
-      User user = userService.findUserById(userId)
-        .orElseThrow(() -> new EntityNotFoundException("User", userId));
+      String exceptionArtName = artName;
+      User user = userService.findByArtName(artName)
+        .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User con artName" + exceptionArtName + "non trpvato"));
 
       if(file.isEmpty()) {
         System.out.println("File vuoto o non ricevuto");
@@ -121,10 +129,7 @@ public class WorkController {
       Work newWork = workService.saveWork(w);
       WorkDto dto = WorkDto.toDto(newWork);
       URI location = ServletUriComponentsBuilder
-        .fromCurrentRequest()
-        .replacePath("api/works/{id}")
-        .buildAndExpand(newWork.getWorkId())
-        .toUri();
+        .fromCurrentRequest().path("/{id}").buildAndExpand(newWork.getWorkId()).toUri();
 
       return ResponseEntity.created(location).body(dto);
     }

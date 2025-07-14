@@ -7,6 +7,7 @@ import com.example.app.models.repositories.UserRepository;
 import com.example.app.models.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -50,6 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.userId")
     public ResponseEntity<UserDto> getUser(@PathVariable Integer id) {
       System.out.println("Fetching user with ID: " + id);
       var userOpt = userService.findUserById(id);

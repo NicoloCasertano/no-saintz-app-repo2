@@ -20,4 +20,6 @@ public interface WorkService {
     List<Work> searchWork(WorkFilterCriteria filters);
 
     List<Work> findByUsersUserId(Integer id);
+
+
 }

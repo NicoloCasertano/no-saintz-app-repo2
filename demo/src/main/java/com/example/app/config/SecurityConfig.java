@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final UserRepository userRepo;
@@ -50,18 +52,38 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    return http
+    http
       .csrf(csrf -> csrf.disable())
-      .cors(cors -> {})
+      .cors(cors -> {})  // se hai configurato un CorsConfigurationSource
+      .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
+      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/**").permitAll()
-        .anyRequest().authenticated()
-      )
-      .exceptionHandling(
-        ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
-      .sessionManagement(
-        sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+        // 1) Endpoints di autenticazione aperti a tutti
+        .requestMatchers("/api/authentications/**")
+        .permitAll()
+
+        // 2) GET pubbliche per works e audio
+        .requestMatchers(HttpMethod.GET, "/api/audios/**", "/api/works/**")
+        .permitAll()
+
+        // 3) sia USER che ADMIN possono fare upload
+        .requestMatchers(HttpMethod.POST, "/api/works/upload")
+        .hasAnyRole("USER", "ADMIN")
+
+        // 4) Solo ADMIN può gestire rotte /api/admins/**
+        .requestMatchers("/api/admins/**")
+        .hasRole("ADMIN")
+
+        // 5) Rotte /api/users/** richiedono autenticazione (qualsiasi utente loggato)
+        .requestMatchers("/api/users/**")
+        .authenticated()
+
+        // 6) Qualunque altra richiesta (es. frontend resources) è permessa
+        .anyRequest().permitAll()
+      );
+
+    return http.build();
   }
 
 }

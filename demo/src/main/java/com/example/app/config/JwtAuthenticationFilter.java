@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     List<String> excludedPath = List.of(
       "/api/authentications/register-area",
       "/api/authentications/log-in-area",
-      "/api/works/upload",
       "/api/audios/**",
       "/api/works/by-user",
       "/api/works/**",
@@ -66,7 +65,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
+        try {
+          userEmail = jwtService.extractUsername(jwt);
+        } catch (io.jsonwebtoken.JwtException e) {
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "token Jwt non valido");
+          return;
+        }
 
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
