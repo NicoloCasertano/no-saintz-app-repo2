@@ -1,13 +1,16 @@
 package com.example.app.models.services;
 
 import com.example.app.models.dtos.UserDto;
+import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class JpaUserService implements UserService {
@@ -54,7 +57,6 @@ public class JpaUserService implements UserService {
   public Optional<UserDto> findDtoById(Integer id) {
     return userRepo.findById(id).map(UserDto::toDto);
   }
-
 
 
 }

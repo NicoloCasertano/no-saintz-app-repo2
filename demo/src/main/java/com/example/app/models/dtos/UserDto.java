@@ -1,8 +1,12 @@
 package com.example.app.models.dtos;
 
+import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserDto {
     private Integer userId;
@@ -11,6 +15,7 @@ public class UserDto {
     private String email;
     private String artName;
     private List<WorkDto> works;
+
 
   public UserDto() {
   }
@@ -40,18 +45,6 @@ public class UserDto {
       );
       return dto;
     }
-
-//    public static UserDto fromEntity(User u) {
-//      UserDto dto = new UserDto();
-//      dto.setUserId(u.getUserId());
-//      dto.setUserName(u.getUsername());
-//      dto.setPassword(u.getPassword());
-//      dto.setArtName(u.getArtName());
-//      dto.setEmail(u.getEmail());
-//      dto.setWorks(u.getWorks().stream()
-//        .map(WorkDto::toDto).toList());
-//      return dto;
-//    }
 
     public Integer getUserId() {
         return userId;
@@ -100,4 +93,5 @@ public class UserDto {
     public void setWorks(List<WorkDto> works) {
       this.works = works;
     }
+
 }
