@@ -1,11 +1,14 @@
 package com.example.app.controllers;
 
 import com.example.app.models.dtos.UserDto;
+import com.example.app.models.dtos.request.PasswordUpdateRequest;
 import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import com.example.app.models.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,14 +48,14 @@ public class UserController {
       Authority newAuth = new Authority(roleString);
 
       user.clearAuthorities();
-      user.addAuthority(newAuth);
+      user.addAuthority(newAuth.toString());
 
       userRepo.save(user);
       return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.userId")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> getUserById(@PathVariable Integer id, Principal principal) {
       System.out.println("Principal: " + principal);
       System.out.println("Fetching user with ID: " + id);
@@ -67,5 +70,6 @@ public class UserController {
       System.out.println("User found: " + dto.getUserName());
       return ResponseEntity.ok(dto);
     }
+
 
 }

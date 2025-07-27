@@ -69,7 +69,7 @@ public class WorkController {
 
     @GetMapping("/by-user/{userId}")
     public List<WorkDto> getWorksDoneByUserId(@PathVariable Integer userId) {
-      return workService.findByUsersUserId(userId).stream().map(WorkDto::toDto).toList();
+        return workService.findByUsersUserId(userId).stream().map(WorkDto::toDto).toList();
     }
 
     @PostMapping
@@ -84,67 +84,74 @@ public class WorkController {
         return ResponseEntity.created(location).build();
     }
 
-    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/upload/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<WorkDto> uploadWork(
-      @RequestParam("file")MultipartFile file,
-      @RequestParam("title")String title,
-      @RequestParam("bpm")Integer bpm,
-      @RequestParam("key")String key,
-      @RequestParam("dataDiCreazione") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dataDiCreazione,
-      @RequestParam("artName") String artName,
-      Authentication auth) throws DataException, EntityNotFoundException, IOException {
+        @RequestParam("file")MultipartFile file,
+        @RequestParam("title")String title,
+        @RequestParam("bpm")Integer bpm,
+        @RequestParam("key")String key,
+        @RequestParam("dataDiCreazione") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dataDiCreazione,
+        @RequestParam("artName") String artName,
+        Authentication auth) throws DataException, EntityNotFoundException, IOException {
 
-      boolean isAdmin = auth.getAuthorities().stream()
-        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = auth.getAuthorities().stream()
+          .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-      if (!isAdmin || artName == null || artName.isBlank()) {
-        User principal = (User) auth.getPrincipal();
-        artName = principal.getArtName();
-      }
+        if (!isAdmin || artName == null || artName.isBlank()) {
+          User principal = (User) auth.getPrincipal();
+          artName = principal.getArtName();
+        }
 
-      String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-      if(file.isEmpty()) throw new RuntimeException("File vuoto");
-      String savedFilePath = fileStorageService.storeFile(file);
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        if(file.isEmpty()) throw new RuntimeException("File vuoto");
+        String savedFilePath = fileStorageService.storeFile(file);
 
-      String exceptionArtName = artName;
-      User user = userService.findByArtName(artName)
-        .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User con artName" + exceptionArtName + "non trpvato"));
+        String exceptionArtName = artName;
+        User user = userService.findByArtName(artName)
+          .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User con artName" + exceptionArtName + "non trpvato"));
 
-      if(file.isEmpty()) {
-        System.out.println("File vuoto o non ricevuto");
-        return ResponseEntity.badRequest().body(null);
-      }
-      Work w = new Work();
-      w.setTitle(title);
-      w.setBpm(bpm);
-      w.setKey(key);
-      w.setDataDiCreazione(dataDiCreazione);
-      w.setUser(user);
+        if(file.isEmpty()) {
+          System.out.println("File vuoto o non ricevuto");
+          return ResponseEntity.badRequest().body(null);
+        }
+        Work w = new Work();
+        w.setTitle(title);
+        w.setBpm(bpm);
+        w.setKey(key);
+        w.setDataDiCreazione(dataDiCreazione);
+        w.setUser(user);
 
-      Audio audio = new Audio();
-      audio.setFilePath(savedFilePath);
-      audio.setOriginalFileName(fileName);
-      w.setAudio(audio);
+        Audio audio = new Audio();
+        audio.setFilePath(savedFilePath);
+        audio.setOriginalFileName(fileName);
+        w.setAudio(audio);
 
-      Work newWork = workService.saveWork(w);
-      WorkDto dto = WorkDto.toDto(newWork);
-      URI location = ServletUriComponentsBuilder
-        .fromCurrentRequest().path("/{id}").buildAndExpand(newWork.getWorkId()).toUri();
+        Work newWork = workService.saveWork(w);
+        WorkDto dto = WorkDto.toDto(newWork);
+        URI location = ServletUriComponentsBuilder
+          .fromCurrentRequest().path("/{id}").buildAndExpand(newWork.getWorkId()).toUri();
 
-      return ResponseEntity.created(location).body(dto);
+        return ResponseEntity.created(location).body(dto);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateWork(@PathVariable int id, @RequestBody WorkDto updateDto) throws DataException, EntityNotFoundException {
-      if (id != updateDto.getWorkId()) {
-        return ResponseEntity.badRequest().body(("Id del path e id del dto non corrispondono"));
-      }
-      Optional<Work> opw = workService.findWorkById(id);
-      if (opw.isEmpty()) {
-        return ResponseEntity.notFound().build();
-      }
-      Work updateWork = workService.updateWork(opw.get());
-      return ResponseEntity.ok(WorkDto.toDto(updateWork));
+        if (id != updateDto.getWorkId()) {
+          return ResponseEntity.badRequest().body(("Id del path e id del dto non corrispondono"));
+        }
+        Optional<Work> opw = workService.findWorkById(id);
+        if (opw.isEmpty()) {
+          return ResponseEntity.notFound().build();
+        }
+        Work work = opw.get();
+
+        work.setTitle(updateDto.getTitle());
+        work.setBpm(updateDto.getBpm());
+        work.setKey(updateDto.getKey());
+        work.setNota(updateDto.getNota());
+
+        Work updateWork = workService.updateWork(opw.get());
+        return ResponseEntity.ok(WorkDto.toDto(updateWork));
     }
 
     @DeleteMapping("/delete/{id}")

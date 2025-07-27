@@ -6,11 +6,13 @@ import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -31,22 +33,26 @@ public class AdminServiceImpl implements AdminService{
     @Transactional
     @Override
     public UserResponse promoteToAdmin(int userId) {
-        Optional<User> user = userRepo.findById(userId);
+      User user = userRepo.findById(userId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Utente non trovato"));
 
-        if (user.isEmpty() || user.get().getAuthorities().stream().anyMatch(authority -> "ROLE_ADMIN"
-                .equals(authority.getAuthority()))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "L'utente non esiste o è già un Admin");
-        }
+      boolean isAlreadyAdmin = user.getAuthorities().stream()
+        .anyMatch(auth -> "ROLE_ADMIN".equals(auth.getAuthority()));
 
-        Set<Authority> authorities = new HashSet<>();
-        authorities.add(new Authority("ROLE_BASE"));
-        authorities.add(new Authority("ROLE_ADMIN"));
-        user.get().setAuthorities(authorities);
+      if (isAlreadyAdmin) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'utente è già un Admin");
+      }
 
-        User savedUser = userRepo.save(user.get());
+      Set<Authority> updatedAuthorities = user.getAuthorities().stream()
+        .filter(Authority.class::isInstance)
+        .map(Authority.class::cast)
+        .collect(Collectors.toSet());
+      updatedAuthorities.add(new Authority("ROLE_ADMIN"));
+      user.setAuthorities(updatedAuthorities.stream().toList());
 
-        return convertToUserResponse(savedUser);
+      User savedUser = userRepo.save(user);
+
+      return convertToUserResponse(savedUser);
     }
 
     @Transactional

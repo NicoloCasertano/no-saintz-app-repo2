@@ -31,11 +31,8 @@ public class User implements UserDetails {
     private String artName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-      name = "user_authorities",
-      joinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<Authority> authorities = new HashSet<>();
+    @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
+    private List<Authority> authorities = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -55,13 +52,6 @@ public class User implements UserDetails {
     }
 
     public User() {}
-
-    public void addAuthority(Authority auth) {
-      this.authorities.add(auth);
-    }
-    public void clearAuthorities() {
-      this.authorities.clear();
-    }
 
     public Integer getUserId() {
         return userId;
@@ -124,11 +114,12 @@ public class User implements UserDetails {
         this.artName = artName;
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    @Override
+    public List<Authority> getAuthorities() {
         return authorities;
     }
 
-    public void setAuthorities(Set<Authority> authorities) {
+    public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
 
@@ -138,5 +129,13 @@ public class User implements UserDetails {
 
     public void setWorks(Set<Work> works) {
       this.works = works;
+    }
+
+    public void addAuthority(String role) {
+      this.authorities.add(new Authority(role));
+    }
+
+    public void clearAuthorities() {
+        this.authorities.clear();
     }
 }

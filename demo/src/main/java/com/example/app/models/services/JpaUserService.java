@@ -1,12 +1,15 @@
 package com.example.app.models.services;
 
 import com.example.app.models.dtos.UserDto;
+import com.example.app.models.dtos.request.PasswordUpdateRequest;
 import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,10 +56,11 @@ public class JpaUserService implements UserService {
       return userRepo.findByArtName(artName);
     }
 
-  @Override
-  public Optional<UserDto> findDtoById(Integer id) {
+    @Override
+    public Optional<UserDto> findDtoById(Integer id) {
     return userRepo.findById(id).map(UserDto::toDto);
   }
+
 
 
 }
