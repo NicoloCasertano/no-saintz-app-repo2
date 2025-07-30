@@ -19,7 +19,6 @@ import java.util.Set;
 public class JpaUserService implements UserService {
     private UserRepository userRepo;
 
-
     @Autowired
     public JpaUserService(UserRepository userRepo) {
         this.userRepo = userRepo;

@@ -2,11 +2,13 @@ package com.example.app.config;
 
 import com.example.app.models.repositories.UserRepository;
 import com.example.app.models.services.JwtServiceImpl;
+import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +23,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -60,11 +65,12 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.addAllowedOrigin("http://localhost:4200");
-    config.addAllowedHeader("*");
-    config.addAllowedMethod("*");
+    config.addAllowedHeader("*"); // oppure specifica: "Authorization", "Content-Type"
+    config.addAllowedMethod("*"); // oppure specifica: "GET", "POST", etc.
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
+
     return new CorsFilter(source);
   }
 
@@ -73,21 +79,32 @@ public class SecurityConfig {
     JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtService, uds);
 
     http
-      .csrf(AbstractHttpConfigurer::disable)
       .cors(cors -> {})
       .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
-      .addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class) // CORS prima
-      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // JWT dopo
+      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // JWT PRIMA
+      .addFilterBefore(corsFilter(), JwtAuthenticationFilter.class)          // CORS DOPO JWT
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/api/authentications/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/audios/**", "/api/works/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/works/upload").hasAnyRole("EMPLOYEE", "ADMIN")
         .requestMatchers("/api/admins/**").hasRole("ADMIN")
-        .requestMatchers("/api/users/**").authenticated()
+        .requestMatchers("/api/users/**").permitAll()
         .anyRequest().permitAll()
-      );
+      )
+      .httpBasic(Customizer.withDefaults())
+      .csrf(AbstractHttpConfigurer::disable);
 
     return http.build();
+  }
+
+  @Bean
+  public CommonsRequestLoggingFilter requestLoggingFilter() {
+    CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
+    loggingFilter.setIncludeClientInfo(true);
+    loggingFilter.setIncludeQueryString(true);
+    loggingFilter.setIncludeHeaders(true);
+    loggingFilter.setIncludePayload(false); // true se vuoi anche body
+    return loggingFilter;
   }
 }

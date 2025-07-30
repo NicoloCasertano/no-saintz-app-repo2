@@ -1,14 +1,12 @@
 package com.example.app.controllers;
 
 import com.example.app.models.dtos.UserDto;
-import com.example.app.models.dtos.request.PasswordUpdateRequest;
 import com.example.app.models.entities.Authority;
 import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import com.example.app.models.services.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +14,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
@@ -31,9 +30,10 @@ public class UserController {
         this.userRepo = userRepo;
     }
 
-    @GetMapping
-      public List<User> getAllUsers() {
-          return userService.findAllUsers();
+    @GetMapping("/all")
+      public List<UserDto> getAllUsers(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "20") int size) {
+          return userService.findAllUsers().stream().map(UserDto::toDto).collect(Collectors.toList());
       }
 
     @PutMapping("/{id}/role")
@@ -71,5 +71,11 @@ public class UserController {
       return ResponseEntity.ok(dto);
     }
 
-
+    @GetMapping
+    public Page<User> getUsers(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "20") int size
+    ) {
+      return (Page<User>) userService.findAllUsers();
+    }
 }

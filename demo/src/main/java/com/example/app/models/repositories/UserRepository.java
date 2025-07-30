@@ -1,10 +1,12 @@
 package com.example.app.models.repositories;
 
 import com.example.app.models.entities.User;
+import org.hibernate.query.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Observable;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {

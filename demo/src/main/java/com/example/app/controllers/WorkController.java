@@ -72,7 +72,7 @@ public class WorkController {
         return workService.findByUsersUserId(userId).stream().map(WorkDto::toDto).toList();
     }
 
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<URI> createWork(@RequestBody WorkDto workDto) throws DataException, EntityNotFoundException {
         Work work = workDto.toWork();
         Work newWork = workService.saveWork(work);
@@ -84,7 +84,7 @@ public class WorkController {
         return ResponseEntity.created(location).build();
     }
 
-    @PostMapping(path = "/upload/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<WorkDto> uploadWork(
         @RequestParam("file")MultipartFile file,
         @RequestParam("title")String title,
