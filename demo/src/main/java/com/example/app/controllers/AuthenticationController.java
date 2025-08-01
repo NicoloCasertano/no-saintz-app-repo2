@@ -19,10 +19,15 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+
     @PostMapping("/register-area")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest registerRequest) throws Exception {
-        AuthenticationResponse response = authenticationService.register(registerRequest);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws Exception {
+        AuthenticationResponse response = authenticationService.register(
+          request.getName(),
+          request.getEmail(),
+          request.getPassword(),
+          request.getArtName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -33,13 +38,13 @@ public class AuthenticationController {
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-  @ControllerAdvice
-  public class GlobalExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAllExceptions(Exception ex) {
-      ex.printStackTrace(); // o logger.error
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Errore interno: " + ex.getMessage());
+    @ControllerAdvice
+    public class GlobalExceptionHandler {
+      @ExceptionHandler(Exception.class)
+      public ResponseEntity<String> handleAllExceptions(Exception ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Errore interno: " + ex.getMessage());
+      }
     }
-  }
 }

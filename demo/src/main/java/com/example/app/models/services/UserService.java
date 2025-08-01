@@ -4,6 +4,7 @@ import com.example.app.models.dtos.UserDto;
 import com.example.app.models.dtos.request.PasswordUpdateRequest;
 import com.example.app.models.entities.User;
 import jakarta.validation.Valid;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,5 +23,7 @@ public interface UserService  {
     Optional<User> findByArtName(String artName);
 
     Optional<UserDto> findDtoById(Integer id);
+
+    UserDetails loadUserByUsername(String email);
 
 }

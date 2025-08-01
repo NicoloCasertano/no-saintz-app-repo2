@@ -7,6 +7,7 @@ import com.example.app.models.entities.User;
 import com.example.app.models.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -60,6 +61,10 @@ public class JpaUserService implements UserService {
     return userRepo.findById(id).map(UserDto::toDto);
   }
 
-
+    @Override
+    public UserDetails loadUserByUsername(String email) {
+      return userRepo.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 
 }

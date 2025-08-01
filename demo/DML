@@ -1,0 +1,38 @@
+-- Inserimento utenti
+INSERT INTO users (user_id, user_name, email, password, art_name) VALUES
+('Nicolò Casertano', 'info.nosaintz@gmail.com', 'NSWEB2729#', 'FLEGO'),
+('Andrea Bon', 'info.nosaintz@gmail.com', 'NSWEB2729#', 'DOC'),
+('Marco', 'client@gmail.com', 'clientweb1234', 'Kesmo'),
+('Nicolò', 'client@gmail.com', 'clientweb1234', 'Monieu'),
+('Luca', 'client@gmail.com', 'clientweb1234', 'Cuta'),
+('Giulia', 'client@gmail.com', 'clientweb1234', 'Jaen'),
+('Davide', 'client@gmail.com', 'clientweb1234', 'Dae'),
+('Deborah', 'client@gmail.com', 'clientweb1234', 'Deiah'),
+('Santelmo', 'client@gmail.com', 'clientweb1234', 'Santelmo'),
+('Frego', 'client@gmail.com', 'clientweb1234', 'Frego'),
+('Gumball', 'client@gmail.com', 'clientweb1234', 'Gumball'),
+('Alessia', 'client@gmail.com', 'clientweb1234', 'Sandra Ru'),
+('Cosimo', 'client@gmail.com', 'clientweb1234', 'Cola Siel'),
+('Massimo', 'client@gmail.com', 'clientweb1234', 'Mash'),
+('Elmira', 'client@gmail.com', 'clientweb1234', 'EL MA');
+
+
+-- Inserimento ruoli utente
+INSERT INTO user_authorities (user_id, authority) VALUES
+(1, 'ROLE_ADMIN'),
+(2, 'ROLE_ADMIN'),
+(3, 'ROLE_EMPLOYEE'),
+(4, 'ROLE_EMPLOYEE'),
+(5, 'ROLE_EMPLOYEE'),
+(6, 'ROLE_EMPLOYEE'),
+(7, 'ROLE_EMPLOYEE'),
+(8, 'ROLE_EMPLOYEE'),
+(9, 'ROLE_EMPLOYEE'),
+(10, 'ROLE_EMPLOYEE'),
+(11, 'ROLE_EMPLOYEE'),
+(12, 'ROLE_EMPLOYEE'),
+(13, 'ROLE_EMPLOYEE'),
+(14, 'ROLE_EMPLOYEE'),
+(15, 'ROLE_EMPLOYEE');
+
+

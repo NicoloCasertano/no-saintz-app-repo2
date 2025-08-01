@@ -71,11 +71,12 @@ public class AdminServiceImpl implements AdminService{
 
     private UserResponse convertToUserResponse(User user) {
         return new UserResponse(
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getArtName(),
-                user.getAuthorities().stream().map(auth -> (Authority) auth).toList());
+            user.getUserId(),
+            user.getUsername(),
+            user.getPassword(),
+            user.getEmail(),
+            user.getArtName(),
+            user.getAuthorities().stream().map(auth -> (Authority) auth).toList());
     }
 
 }

@@ -7,14 +7,15 @@ import java.util.List;
 public class UserResponse {
     private Integer userId;
     private String userName;
-
+    private String password;
     private String email;
     private String artName;
     private List<Authority> authorities;
 
-    public UserResponse(Integer userId, String userName, String email, String artName, List<Authority> authorities) {
+    public UserResponse(Integer userId, String userName, String password, String email, String artName, List<Authority> authorities) {
         this.userId = userId;
         this.userName = userName;
+        this.password = password;
         this.email = email;
         this.artName = artName;
         this.authorities = authorities;
@@ -58,5 +59,13 @@ public class UserResponse {
 
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public String getPassword() {
+      return password;
+    }
+
+    public void setPassword(String password) {
+      this.password = password;
     }
 }

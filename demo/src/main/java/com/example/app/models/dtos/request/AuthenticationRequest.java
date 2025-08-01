@@ -5,17 +5,18 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 public class AuthenticationRequest {
-    @NotEmpty(message = "Email obbligatoria")
-    @Email(message = "Formato dell'email non valido")
-    private String email;
 
     @NotEmpty(message = "Password obbligatoria")
     @Size(min = 8, max = 32, message = "Password deve contenere tra gli 8 e i 32 caratteri")
     private String password;
 
-    public AuthenticationRequest(String email, String password) {
-        this.email = email;
+    @NotEmpty(message = "Email obbligatoria")
+    @Email(message = "Formato dell'email non valido")
+    private String email;
+
+    public AuthenticationRequest(String password, String email) {
         this.password = password;
+        this.email = email;
     }
 
     public String getEmail() {
@@ -33,4 +34,5 @@ public class AuthenticationRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

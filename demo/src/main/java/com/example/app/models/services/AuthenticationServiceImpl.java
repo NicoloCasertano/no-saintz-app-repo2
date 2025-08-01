@@ -32,17 +32,31 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public AuthenticationResponse register(RegisterRequest input) throws Exception {
-      if (isEmailTaken(input.getEmail())) {
-        throw new Exception("Email already taken");
+    public AuthenticationResponse register(String userName, String email, String rawPassword, String artName) throws Exception {
+      if (userRepository.findByEmail(email).isPresent()) {
+        throw new Exception("User already exists");
       }
-      User user = buildNewUser(input);
-      user.setUserId(null);
-      System.out.println("User ID before save: " + user.getUserId());
-      userRepository.save(user);
 
-      AuthenticationRequest authReq = new AuthenticationRequest(input.getEmail(), input.getPassword());
-      return login(authReq);
+      User user = new User();
+      user.setUserName(userName);
+      user.setEmail(email);
+      user.setPassword(passwordEncoder.encode(rawPassword));
+      user.setArtName(artName);
+
+      User savedUser = userRepository.save(user);
+      userRepository.flush();
+      System.out.println("Saved user artName: " + savedUser.getArtName());
+
+      String token = jwtService.generateToken(new HashMap<>(), savedUser);
+
+      return new AuthenticationResponse(
+        token,
+        savedUser.getUsername(),
+        savedUser.getAuthorities().stream()
+          .map(GrantedAuthority::getAuthority)
+          .collect(Collectors.toList()),
+        savedUser.getArtName()
+      );
     }
 
     @Override
@@ -59,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jwtToken = jwtService.generateToken(new HashMap<>(), user);
 
         return new AuthenticationResponse(jwtToken, user.getUsername(), user.getAuthorities().stream()
-          .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+          .map(GrantedAuthority::getAuthority).collect(Collectors.toList()), user.getArtName());
     }
 
 

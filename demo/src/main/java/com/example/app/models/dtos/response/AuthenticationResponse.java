@@ -6,10 +6,12 @@ public class AuthenticationResponse {
     private String token;
     private String username;
     private List<String> authorities;
-    public AuthenticationResponse(String token, String username, List<String> authorities) {
+    private String artName;
+    public AuthenticationResponse(String token, String username, List<String> authorities, String artName) {
         this.token = token;
         this.username = username;
         this.authorities = authorities;
+        this.artName = artName;
     }
 
     public String getToken() {
@@ -34,5 +36,13 @@ public class AuthenticationResponse {
 
   public void setAuthorities(List<String> authorities) {
     this.authorities = authorities;
+  }
+
+  public String getArtName() {
+    return artName;
+  }
+
+  public void setArtName(String artName) {
+    this.artName = artName;
   }
 }

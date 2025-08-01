@@ -22,11 +22,14 @@ import java.util.function.Function;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    @Autowired
     private SecretKey jwtSigningKey;
 
     @Value("${spring.jwt.expiration}")
     private long JWT_EXPIRATION;
+
+    public JwtServiceImpl(@Value("${spring.jwt.secret}") String secret) {
+      this.jwtSigningKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     @Override
     public String extractUsername(String token) {
@@ -37,6 +40,7 @@ public class JwtServiceImpl implements JwtService {
       Claims claims = Jwts
         .parserBuilder()
         .setSigningKey(jwtSigningKey)
+        .setAllowedClockSkewSeconds(60)
         .build()
         .parseClaimsJws(token)
         .getBody();
@@ -46,6 +50,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts
           .parserBuilder()
           .setSigningKey(jwtSigningKey)
+          .setAllowedClockSkewSeconds(60)
           .build()
           .parseClaimsJws(token)
           .getBody();
@@ -69,16 +74,17 @@ public class JwtServiceImpl implements JwtService {
     public String generateToken(Map<String, Object> claims, User userDetails) {
         claims.put("userId", userDetails.getUserId());
         claims.put("userName", userDetails.getUsername());
-        claims.put("password", null);
+        claims.put("password", userDetails.getPassword());
         claims.put("email", userDetails.getEmail());
         claims.put("artName", userDetails.getArtName());
+        System.out.println("Generated JWT Token: " + jwtSigningKey);
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getEmail())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
-                .signWith(jwtSigningKey, SignatureAlgorithm.HS256)
-                .compact();
+                  .setClaims(claims)
+                  .setSubject(userDetails.getEmail())
+                  .setIssuedAt(new Date(System.currentTimeMillis()))
+                  .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                  .signWith(jwtSigningKey, SignatureAlgorithm.HS256)
+                  .compact();
     }
 
 //    private Key getSigningKey() {

@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -48,6 +50,21 @@ public class SecurityConfig {
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
     return config.getAuthenticationManager();
+  }
+
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return username -> userRepo.findByEmail(username)
+      .map(user -> org.springframework.security.core.userdetails.User.builder()
+        .username(user.getEmail())
+        .password(user.getPassword())
+        .authorities("ROLE_EMPLOYEE")
+        .build())
+      .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(userDetailsService());
   }
 
   @Bean
@@ -85,7 +102,8 @@ public class SecurityConfig {
       .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // JWT PRIMA
       .addFilterBefore(corsFilter(), JwtAuthenticationFilter.class)          // CORS DOPO JWT
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/authentications/**").permitAll()
+        .requestMatchers("/api/authentications/log-in-area").permitAll()
+        .requestMatchers("/api/authentications/register-area").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/audios/**", "/api/works/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/works/upload").hasAnyRole("EMPLOYEE", "ADMIN")
         .requestMatchers("/api/admins/**").hasRole("ADMIN")

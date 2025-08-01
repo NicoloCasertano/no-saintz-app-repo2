@@ -11,17 +11,20 @@ public class RegisterRequest {
 
     @NotEmpty(message = "Indirizzo email obbligatoria")
     @Email(message = "Formato email non valido")
-
     private String email;
 
     @NotEmpty(message = "Password obbligatoria")
     @Size(min = 8, max = 32, message = "La password deve avere tra gli 8 e i 32 caratteri")
     private String password;
 
-    public RegisterRequest(String name, String email, String password) {
+    @NotEmpty(message = "Nome d'Arte obbligatorio")
+    private String artName;
+
+    public RegisterRequest(String name, String email, String password, String artName) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.artName = artName;
     }
 
     public String getName() {
@@ -46,5 +49,13 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getArtName() {
+      return artName;
+    }
+
+    public void setArtName(String artName) {
+      this.artName = artName;
     }
 }
