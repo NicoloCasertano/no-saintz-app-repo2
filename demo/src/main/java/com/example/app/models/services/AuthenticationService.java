@@ -7,6 +7,6 @@ import com.example.app.models.entities.Authority;
 
 
 public interface AuthenticationService {
-    AuthenticationResponse register(String userName, String email, String password, String artName) throws Exception;
+    AuthenticationResponse register(RegisterRequest request) throws Exception;
     AuthenticationResponse login(AuthenticationRequest request);
 }

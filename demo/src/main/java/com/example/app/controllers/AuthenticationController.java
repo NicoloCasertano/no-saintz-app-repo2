@@ -22,12 +22,8 @@ public class AuthenticationController {
 
     @PostMapping("/register-area")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws Exception {
-        AuthenticationResponse response = authenticationService.register(
-          request.getName(),
-          request.getEmail(),
-          request.getPassword(),
-          request.getArtName());
+    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) throws Exception {
+        AuthenticationResponse response = authenticationService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
