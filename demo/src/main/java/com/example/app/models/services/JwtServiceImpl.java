@@ -9,6 +9,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -74,9 +76,13 @@ public class JwtServiceImpl implements JwtService {
     public String generateToken(Map<String, Object> claims, User userDetails) {
         claims.put("userId", userDetails.getUserId());
         claims.put("userName", userDetails.getUsername());
-        claims.put("password", userDetails.getPassword());
+
         claims.put("email", userDetails.getEmail());
         claims.put("artName", userDetails.getArtName());
+        claims.put("authorities", userDetails.getAuthorities()
+          .stream()
+          .map(GrantedAuthority::getAuthority)
+          .collect(Collectors.toList()));
         System.out.println("Generated JWT Token: " + jwtSigningKey);
         return Jwts.builder()
                   .setClaims(claims)

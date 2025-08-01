@@ -105,7 +105,7 @@ public class SecurityConfig {
         .requestMatchers("/api/authentications/log-in-area").permitAll()
         .requestMatchers("/api/authentications/register-area").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/audios/**", "/api/works/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/api/works/upload").hasAnyRole("EMPLOYEE", "ADMIN")
+        .requestMatchers(HttpMethod.POST, "/api/works/upload").hasAnyRole( "ADMIN")
         .requestMatchers("/api/admins/**").hasRole("ADMIN")
         .requestMatchers("/api/users/**").permitAll()
         .anyRequest().permitAll()
